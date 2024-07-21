@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s # Server 抓取頻率
+  evaluation_interval: 5s # Server 評估頻率
+  external_labels:
+    monitor: "my-monitor"
+rule_files: #如何整併數據或建立告警條件
+    - "alert.rules"
+    - "nginx.rules"
+scrape_configs: # 去哪邊蒐集資料
+  - job_name: "prometheus"
+    metrics_path: "/q/metrics"
+    static_configs:
+      - targets: ["app:8080"] #container name:port
