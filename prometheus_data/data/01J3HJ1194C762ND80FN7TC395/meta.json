@@ -1,0 +1,17 @@
+{
+	"ulid": "01J3HJ1194C762ND80FN7TC395",
+	"minTime": 1721548804384,
+	"maxTime": 1721556000000,
+	"stats": {
+		"numSamples": 64144,
+		"numSeries": 152,
+		"numChunks": 608
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01J3HJ1194C762ND80FN7TC395"
+		]
+	},
+	"version": 1
+}

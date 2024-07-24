@@ -35,10 +35,12 @@ services:
     container_name: prometheus
     user: root
     volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.route-prefix=/test'
+      - '--web.external-url=http://localhost:9090/test'
     ports:
       - '9090:9090'
 
