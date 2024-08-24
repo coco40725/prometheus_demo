@@ -65,9 +65,38 @@ services:
       - '3000:3000'
 
 ```
+### 2. 建立 grafana.ini
+用於設定 grafana
+```yaml
+#https://github.com/grafana/grafana/blob/main/conf/defaults.ini
+#################################### Server ##############################
+[server]
+# Protocol (http, https, h2, socket)
+protocol = http
 
+# Minimum TLS version allowed. By default, this value is empty. Accepted values are: TLS1.2, TLS1.3. If nothing is set TLS1.2 would be taken
+min_tls_version = ""
 
-### 2. 建立 prometheus.yaml
+# The ip address to bind to, empty will bind to all interfaces
+http_addr =
+
+# The http port to use
+http_port = 3000
+
+# The public facing domain name used to access grafana from a browser
+domain = localhost
+
+# Redirect to correct domain if host header does not match domain
+# Prevents DNS rebinding attacks
+enforce_domain = false
+
+serve_from_sub_path = true
+
+# The full public facing url
+root_url = %(protocol)s://%(domain)s:%(http_port)s/grafana
+```
+
+### 3. 建立 prometheus.yaml
 用於設定監控系統的設定檔，可以設定抓取頻率、評估頻率、告警規則、蒐集資料的來源等。
 
 這裡有個常犯錯的地方:
@@ -89,11 +118,11 @@ scrape_configs: # 去哪邊蒐集資料
 
 ```
 
-### 3. (option) 建立 test.sh
+### 4. (option) 建立 test.sh
 用於快速發送 request
 
 
-### 4. 執行
+### 5. 執行
 ```shell
 # 建立 app image
 docker build -f src/main/docker/Dockerfile.jvm -t prometheus_demo .
@@ -103,7 +132,7 @@ docker-compose up
 ```
 
 
-### 5. 檢查服務是否順利啟動
+### 6. 檢查服務是否順利啟動
 - app: http://localhost:8080/example/prime/2 
   - 會回傳 "2 is not prime."
 - quarkus metrics: http://localhost:8080/q/metrics
@@ -122,7 +151,7 @@ docker-compose up
     # TYPE jvm_memory_committed_bytes gauge
     ...
   ```
-- prometheus: http://localhost:9090/targets
+- prometheus: http://localhost:9090/test/targets
   - 檢查 Targets 是否都是 up
    
   ![target_up.png](images%2Ftarget_up.png)
@@ -133,14 +162,14 @@ docker-compose up
   
   ![grafana_1.png](images%2Fgrafana_1.png)
 
-### 6. 檢查 prometheus 是否有抓到資料
+### 7. 檢查 prometheus 是否有抓到資料
 我們可以透過執行 ``test.sh`` 不斷地發送 request，然後到 prometheus 的 ``Graph`` 頁面查看是否有抓到資料。
 我們選擇 ``http_server_requests_seconds_count`` 這個 metrics 來查看 request 數量。 
 
 ![prometheus_1.png](images%2Fprometheus_1.png)
 
 
-### 7. 將資料匯入到 Grafana
+### 8. 將資料匯入到 Grafana
 - 建立 data source: (Connections -> Data Sources -> Add data source)
 
   指定資料的來源，這裡我們選擇 Prometheus。 HTTP 的 URL 設定 http://prometheus:9090
@@ -162,7 +191,7 @@ docker-compose up
   
   ![prometheus_3.png](images%2Fprometheus_3.png)
 
-### 8. 建立 Alert
+### 9. 建立 Alert
 - 建立 Contact points: (Alerts -> Contact points)
     
     指定告警訊息要發送到哪裡，支援 Email, Google Chat 等等，這裡我們使用 Google Chat。
